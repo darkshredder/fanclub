@@ -12,6 +12,8 @@ class Message(TimestampModel):
         Profile, on_delete=models.CASCADE, related_name='profile_from')
     message_img = models.ImageField(
         upload_to='chat/message/', verbose_name="Message Image", blank=True, null=True, default=None)
+    read_by = models.ManyToManyField(
+        Profile, related_name="read_by")
 
     
     def __str__(self):
