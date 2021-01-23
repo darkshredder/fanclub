@@ -3,17 +3,20 @@ from users.serializers import ProfileSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from users.models import Profile
+from users.models import Profile, Hobby
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from rest_framework import status
 from django.contrib.auth.models import update_last_login
 import requests
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.permissions import IsAuthenticated
 class UserViewSet(viewsets.ViewSet):
     """
-    A simple ViewSet for Register or Login users.
-    """
+    A simple ViewSet for Register or Login, Hobby Add,Delete and Fetch Profile users.
+    """ 
+
+
     @action(detail=False, methods=['post'])
     def register(self, request):
         profile = Profile.objects._create_user(
@@ -26,8 +29,11 @@ class UserViewSet(viewsets.ViewSet):
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
+
+
     @action(detail=False, methods=['post'])
     def login(self, request):
+        
         data = request.data
         email = data.get("email", None)
         password = data.get("password", None)
@@ -39,7 +45,7 @@ class UserViewSet(viewsets.ViewSet):
         try:
             profile = Profile.objects.get(email=email)
         except ObjectDoesNotExist:
-            return Response({"error_msg:Username Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error_msg:email Not Found"}, status=status.HTTP_404_NOT_FOUND)
 
         user = authenticate(email=email, password=password)
         if user is not None:
@@ -84,5 +90,43 @@ class UserViewSet(viewsets.ViewSet):
             token, created = Token.objects.get_or_create(user=profile)
             update_last_login(None, profile)
             return Response({"token": token.key}, status=status.HTTP_200_OK)
+    
+
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def profile(self, request):
+        serializer = ProfileSerializer(request.user)
+        return Response(serializer.data)
+
+
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    def addHobby(self, request):
+        data = request.data
+        user = request.user
+        hobby = data.get("hobby", None)
+        if not hobby:
+            return Response("Hobby should be provided ! ", status=status.HTTP_400_BAD_REQUEST)
+        hobby = hobby.lower().title()
+        hobbyObject, created = Hobby.objects.get_or_create(name=hobby)
+        user.hobbies.add(hobbyObject)
+        user.save()
+        return Response({"status": "Successfully added a new hobby"}, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    def deleteHobby(self, request):
+        data = request.data
+        user = request.user
+        hobbyId = data.get("hobbyId", None)
+        if not hobbyId:
+            return Response("Hobby should be provided ! ", status=status.HTTP_400_BAD_REQUEST)
+        try:
+            hobby = Hobby.objects.get(id=hobbyId)
+            user.hobbies.remove(hobby)
+            user.save()
+            return Response({"status": "Successfully removed  hobby"}, status=status.HTTP_200_OK)
+
+        except ObjectDoesNotExist:
+            return Response("Wrong Hobby provided!!! ", status=status.HTTP_400_BAD_REQUEST)
 
 
