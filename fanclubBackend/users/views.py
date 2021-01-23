@@ -52,8 +52,6 @@ class UserViewSet(viewsets.ViewSet):
             token, created = Token.objects.get_or_create(user=user)
             update_last_login(None, user)
 
-            # if user.role_type == "CA":
-
             return Response({"token": token.key}, status=status.HTTP_200_OK)
 
         return Response({"error_msg": "Passwords does not match"}, status=status.HTTP_403_FORBIDDEN)

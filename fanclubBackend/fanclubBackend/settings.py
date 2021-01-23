@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",  # Token Authentication
     'users',
     'utilities',
-    'chat'
+    'chat',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -113,6 +114,18 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 # Define own user model
 AUTH_USER_MODEL = "users.Profile"
+
+# Channels settings
+ASGI_APPLICATION = "fanclubBackend.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

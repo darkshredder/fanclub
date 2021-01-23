@@ -4,7 +4,7 @@ from django.db import models
 
 class Group(TimestampModel):
 
-    title = models.CharField(max_length=50, verbose_name="Group name")
+    title = models.CharField(max_length=50, verbose_name="Group name", unique=True)
     description = models.TextField(verbose_name="Group Description", default="", max_length=1000)
     members = models.ManyToManyField(
         Profile, related_name="group_members")

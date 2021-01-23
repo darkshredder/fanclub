@@ -5,7 +5,7 @@ from django.db import models
 
 class Message(TimestampModel):
 
-    text = models.TextField(verbose_name="text message", default="", max_length=1000)
+    text = models.TextField(verbose_name="text message", default="", blank=True, null=True, max_length=1000)
     group_from = models.ForeignKey(
         Group, on_delete=models.CASCADE, related_name='group_from')
     profile_from = models.ForeignKey(
