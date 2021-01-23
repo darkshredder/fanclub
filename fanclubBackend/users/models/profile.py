@@ -2,7 +2,8 @@ from django.db import models
 from utilities.models import TimestampModel
 from django.contrib.auth.models import (AbstractUser)
 from django.core.validators import RegexValidator
-from .customusermanager import CustomUserManager
+from users.customusermanager import CustomUserManager
+from users.models import Hobby
 
 
 class AbstractProfile(AbstractUser, TimestampModel):
@@ -19,6 +20,12 @@ class AbstractProfile(AbstractUser, TimestampModel):
                            message="Phone Number Not Valid",)
         ],
         verbose_name="Phone Number")
+    profile_img = models.ImageField(
+        upload_to='users/', verbose_name="User's Profile Image", blank=True, null=True, default=None)
+    profile_username = models.CharField(max_length=50, verbose_name="Username", unique=True,blank=True,
+        null=True)
+    hobbies = models.ManyToManyField(
+        Hobby, blank=True, related_name="hobbies")
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
