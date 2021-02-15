@@ -11,6 +11,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     hobbies = Hobbyserializer(many=True, read_only=True)
     class Meta:
         model = Profile
-        fields = "__all__"
+        exclude = ('password', 'is_superuser', 'is_staff', 'is_active', 'user_permissions', 'groups')
 
 
