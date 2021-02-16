@@ -20,7 +20,20 @@ class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet for Register or Login, Hobby Add,Delete and Fetch Profile users.
     """ 
+    
+    def retrieve(self, request, pk=None):
+        queryset = Profile.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = ProfileSerializer(user)
+        return Response(serializer.data)
 
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    def partial_update_profile(self, request, *args, **kwargs):
+            instance = request.user
+            serializer = ProfileSerializer(instance, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
 
     @action(detail=False, methods=['post'])
     def register(self, request):

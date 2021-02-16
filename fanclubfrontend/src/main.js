@@ -8,12 +8,13 @@ import Signup from "./components/signup";
 import PrivateRoute from "./utils/privateRoute";
 import LandingPage from "./components/landingPage";
 import Groups from "./components/groups";
-
+import AddGroup from "./components/addGroup";
 export class Main extends Component {
   render() {
     return (
       <div>
         <Switch>
+          <PrivateRoute exact path="/create_group" component={AddGroup} />
           <PrivateRoute exact path="/groups" component={Groups} />
           <PrivateRoute exact path="/" component={LandingPage} />
           <Route exact path="/login" component={Login} />
