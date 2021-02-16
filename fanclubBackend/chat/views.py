@@ -47,6 +47,21 @@ class GroupViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(followed_groups, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, methods=['get'])
+    def follow_group(self, request, pk=None):
+        group = self.get_object()
+        group.members.add(request.user)
+        group.save()
+        serializer = self.get_serializer(Group.objects.all(),many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def unfollow_group(self, request, pk=None):
+        group = self.get_object()
+        group.members.remove(request.user)
+        group.save()
+        serializer = self.get_serializer(Group.objects.all(),many=True)
+        return Response(serializer.data)
 
 class MessageViewSet(viewsets.ViewSet):
     """

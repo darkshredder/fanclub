@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.shortcuts import get_object_or_404
 from users.serializers import ProfileSerializer
 from rest_framework import viewsets
@@ -11,6 +13,9 @@ from django.contrib.auth.models import update_last_login
 import requests
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
+from utilities.base64conv import decode_base64_file
+import base64
+from django.core.files.base import ContentFile
 class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet for Register or Login, Hobby Add,Delete and Fetch Profile users.
@@ -22,11 +27,24 @@ class UserViewSet(viewsets.ViewSet):
         profile = Profile.objects._create_user(
                 email=request.data['email'],
                 full_name=request.data['full_name'],
-                password=request.data['password']
+                password=request.data['password'],
             )
         profile.set_password(request.data['password'])
-        profile.save()
-        serializer = ProfileSerializer(profile)
+        request.data._mutable = True
+        image = False
+        if(request.data.get('profile_img')):
+            image = request.data['profile_img']
+            request.data['profile_img'] = ''
+        request.data['password'] = profile.password
+        request.data._mutable = False
+        serializer = ProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        if (image):
+            profile_main = Profile.objects.filter(email=serializer.data['email'])[0]
+            profile_main.profile_img = image
+            profile_main.save()
+            serializer = ProfileSerializer(profile_main)
         return Response(serializer.data)
 
 
@@ -45,7 +63,7 @@ class UserViewSet(viewsets.ViewSet):
         try:
             profile = Profile.objects.get(email=email)
         except ObjectDoesNotExist:
-            return Response({"error_msg:email Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response("Email Not Found", status=status.HTTP_404_NOT_FOUND)
 
         user = authenticate(email=email, password=password)
         if user is not None:
@@ -54,7 +72,7 @@ class UserViewSet(viewsets.ViewSet):
 
             return Response({"token": token.key}, status=status.HTTP_200_OK)
 
-        return Response({"error_msg": "Passwords does not match"}, status=status.HTTP_403_FORBIDDEN)
+        return Response("Passwords does not match", status=status.HTTP_403_FORBIDDEN)
     
     @action(detail=False, methods=['post'])
     def googleLoginSignup(self, request):
