@@ -11,6 +11,7 @@ import {
   Input,
   Message,
   Modal,
+  Label,
 } from "semantic-ui-react";
 
 import { w3cwebsocket as W3CWebSocket } from "websocket";
@@ -35,6 +36,19 @@ export default class index extends Component {
   };
   scrollToUnread = () => {
     this.messagesUnread.scrollIntoView({ behavior: "smooth" });
+  };
+
+  validURL = (str) => {
+    var pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
+    return !!pattern.test(str);
   };
 
   componentDidMount = () => {
@@ -136,6 +150,27 @@ export default class index extends Component {
 
   handleChange = (e, { name, value }) => this.setState({ [name]: value });
 
+  onFileUpload = (e) => {
+    console.log(e.target.files[0]);
+    const formData = new FormData();
+
+    formData.append("file", e.target.files[0]);
+    formData.append("upload_preset", "fuwbum9f");
+
+    let options = {
+      method: "POST",
+      body: formData,
+    };
+
+    fetch("https://api.Cloudinary.com/v1_1/dcbgaudem/image/upload", options)
+      .then((res) => res.json())
+      .then((res) => {
+        this.setState({ new_message: res?.secure_url });
+        this.sendMessage();
+      })
+      .catch((err) => console.log(err));
+  };
+
   render() {
     const {
       groupData,
@@ -199,7 +234,11 @@ export default class index extends Component {
                     >
                       {message?.profile_from?.full_name} - {message?.modified}
                     </Message.Header>
-                    <Message.Content>{message?.text}</Message.Content>
+                    {this.validURL(message?.text) ? (
+                      <Image size="medium" src={message?.text}></Image>
+                    ) : (
+                      <Message.Content>{message?.text}</Message.Content>
+                    )}
                   </Message>
                 </Container>
               );
@@ -248,7 +287,11 @@ export default class index extends Component {
                     >
                       {message?.profile_from?.full_name} - {message?.modified}
                     </Message.Header>
-                    <Message.Content>{message?.text}</Message.Content>
+                    {this.validURL(message?.text) ? (
+                      <Image size="medium" src={message?.text}></Image>
+                    ) : (
+                      <Message.Content>{message?.text}</Message.Content>
+                    )}
                   </Message>
                 </Container>
               );
@@ -286,7 +329,11 @@ export default class index extends Component {
                     >
                       {message?.username?.full_name} - {message?.modified}
                     </Message.Header>
-                    <Message.Content>{message?.message}</Message.Content>
+                    {this.validURL(message?.message) ? (
+                      <Image size="medium" src={message?.message}></Image>
+                    ) : (
+                      <Message.Content>{message?.message}</Message.Content>
+                    )}
                   </Message>
                 </Container>
               );
@@ -299,9 +346,24 @@ export default class index extends Component {
             ></div>
           </Segment>
         </Segment>
-        <Segment>
+        <Segment style={{ display: "flex" }}>
+          <Button
+            as="div"
+            labelPosition="right"
+            onClick={() => this.input.click()}
+          >
+            <Button icon title="Upload Image" color="teal" fluid>
+              <Icon name="image" />
+            </Button>
+          </Button>
+
+          <input
+            ref={(element) => (this.input = element)}
+            hidden
+            onChange={(e) => this.onFileUpload(e)}
+            type="file"
+          />
           <Input
-            fluid
             action={{
               icon: "send",
               color: "teal",
@@ -311,6 +373,8 @@ export default class index extends Component {
             onChange={this.handleChange}
             name="new_message"
             value={new_message}
+            onKeyPress={(event) => event.key === "Enter" && this.sendMessage()}
+            style={{ display: "contents" }}
           />
         </Segment>
       </Container>
