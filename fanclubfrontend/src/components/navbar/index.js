@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import history from "../../history";
 
 export default class Navbar extends Component {
-  state = { activeItem: "Following Chat Rooms", profile: null };
+  state = { activeItem: "Following Chat Rooms", profile: null, dropdown: null };
 
   componentDidMount = () => {
     if (history.location.pathname === "/") {
@@ -54,6 +54,19 @@ export default class Navbar extends Component {
     }
   };
 
+  onChange = (e) => {
+    this.setState({
+      dropdown: e.target.textContent,
+    });
+    if (e.target.textContent === "Edit Profile")
+      history.push(`/profile/${localStorage.getItem("user_id")}`);
+    if (e.target.textContent === "Log Out") {
+      localStorage.removeItem("user_token");
+      localStorage.removeItem("user_id");
+      history.push(`/`);
+    }
+  };
+
   render() {
     const { activeItem, profile } = this.state;
     const options = [
@@ -64,7 +77,7 @@ export default class Navbar extends Component {
         content: profile?.full_name,
       },
       {
-        key: "Edit Profile",
+        key: "Edit",
         text: "Edit Profile",
         value: "Edit Profile",
         content: "Edit Profile",
@@ -97,7 +110,11 @@ export default class Navbar extends Component {
           <Menu.Menu position="right">
             <Header as="h4">
               <Image
-                src={"http://localhost:8000" + profile?.profile_img}
+                src={
+                    profile?.profile_img
+                      ? `http://localhost:8000${profile?.profile_img}`
+                      : `https://react.semantic-ui.com/images/wireframe/square-image.png`
+                  }
                 circular
               />
               <Header.Content>
@@ -106,6 +123,7 @@ export default class Navbar extends Component {
                   header="Profile"
                   options={options}
                   defaultValue={options[0].value}
+                  onChange={this.onChange}
                 />
               </Header.Content>
             </Header>

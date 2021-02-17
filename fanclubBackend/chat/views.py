@@ -10,6 +10,8 @@ from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework import status
+
 
 # Create your views here.
 
@@ -62,6 +64,17 @@ class GroupViewSet(viewsets.ModelViewSet):
         group.save()
         serializer = self.get_serializer(Group.objects.all(),many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'])
+    def add_admin(self, request):
+        is_group_admin = Group.objects.filter(id=request.data['group_id'], admins=request.user.id)
+        if (not is_group_admin):
+            return Response("User is not a Group Admin", status=status.HTTP_400_BAD_REQUEST)
+        group = Group.objects.filter(id=request.data['group_id'])
+        group[0].admins.add(request.data['new_admin_id'])
+        group[0].save()
+        serializer = self.get_serializer(Group.objects.get(pk=request.data['group_id']))
+        return Response(serializer.data)
 
 class MessageViewSet(viewsets.ViewSet):
     """
@@ -72,6 +85,15 @@ class MessageViewSet(viewsets.ViewSet):
     def group_messages(self, request):
         group_id = request.data['group_id']
         group_messages = Message.objects.filter(group_from=group_id)
-        print(group_messages)
         serializer = MessageSerializer(group_messages, many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    def unread_read_group_messages(self, request):
+        group_id = request.data['group_id']
+        group_messages_all = Message.objects.filter(group_from=group_id)
+        group_messages_read = Message.objects.filter(group_from=group_id, read_by=request.user.id)
+        group_messages_unread = group_messages_all.difference(group_messages_read)
+        serializer_read = MessageSerializer(group_messages_read, many=True)
+        serializer_unread = MessageSerializer(group_messages_unread, many=True)
+        return Response({"read_messages":serializer_read.data,"unread_messages":serializer_unread.data})

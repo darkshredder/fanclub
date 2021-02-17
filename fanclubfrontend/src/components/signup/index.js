@@ -55,7 +55,7 @@ class SignupForm extends Component {
       if (full_name) formData.append("full_name", full_name);
       if (email) formData.append("email", email);
       if (password) formData.append("password", password);
-      if (phone_number) formData.append("full_name", phone_number);
+      if (phone_number) formData.append("phone_number", phone_number);
       if (file) formData.append("profile_img", file, fileName);
 
       FetchApi("post", "/auth/users/register/", formData, null)
@@ -63,7 +63,7 @@ class SignupForm extends Component {
           console.log(res.data);
           localStorage.setItem("user_token", res.data.token);
           toast.success("Successfully Registered");
-          history.push("/");
+          history.push("/login");
         })
         .catch((error) => {
           console.log(error.response);

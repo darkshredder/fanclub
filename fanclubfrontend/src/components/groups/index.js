@@ -60,7 +60,7 @@ export default class groups extends Component {
   render() {
     const { allGroups, user_id } = this.state;
     return (
-      <Table padded color="black" inverted>
+      <Table padded color="black" >
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>

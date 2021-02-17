@@ -20,7 +20,7 @@ class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet for Register or Login, Hobby Add,Delete and Fetch Profile users.
     """ 
-    
+
     def retrieve(self, request, pk=None):
         queryset = Profile.objects.all()
         user = get_object_or_404(queryset, pk=pk)
@@ -130,7 +130,7 @@ class UserViewSet(viewsets.ViewSet):
 
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
-    def addHobby(self, request):
+    def add_hobby(self, request):
         data = request.data
         user = request.user
         hobby = data.get("hobby", None)
@@ -143,7 +143,7 @@ class UserViewSet(viewsets.ViewSet):
         return Response({"status": "Successfully added a new hobby"}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
-    def deleteHobby(self, request):
+    def remove_hobby(self, request):
         data = request.data
         user = request.user
         hobbyId = data.get("hobbyId", None)

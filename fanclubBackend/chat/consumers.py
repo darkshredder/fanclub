@@ -13,6 +13,7 @@ from django.contrib.auth.models import AnonymousUser
 # Local imports.
 from chat.models import Group, Message
 from users.serializers import ProfileSerializer
+from users.models import Profile
 
 @database_sync_to_async
 def get_group(group_id):
@@ -20,12 +21,17 @@ def get_group(group_id):
 
 @database_sync_to_async
 def save_message(message, user, group):
-
     return Message(text=message, profile_from=user, group_from=group).save()
 
 @database_sync_to_async
 def serialize_user(user):
     return ProfileSerializer(user).data
+
+@database_sync_to_async
+def add_read_by_to_all_messages(user, group):
+    profile = Profile.objects.get(pk=user.id)
+    all_messages = Message.objects.filter(group_from=group)
+    return profile.read_by.add(*all_messages)
 
 class GroupChatConsumer(AsyncWebsocketConsumer):
 
@@ -72,6 +78,8 @@ class GroupChatConsumer(AsyncWebsocketConsumer):
 
     async def websocket_disconnect(self, message):
         # Leave room group
+        await add_read_by_to_all_messages(self.scope['user'], self.group)
+        
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
