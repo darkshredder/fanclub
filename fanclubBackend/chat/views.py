@@ -6,11 +6,13 @@ from rest_framework import generics
 from chat.models import Group, Message
 from chat.serializers import GroupDetailedSerializer, GroupSerializer, MessageSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from django.db.models import Q
+from django.db.models import Q, Count
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from users.models import Profile
+from users.serializers import ProfileSerializer,ProfileSerializerTotalMessages
 
 
 # Create your views here.
@@ -74,6 +76,13 @@ class GroupViewSet(viewsets.ModelViewSet):
         group[0].admins.add(request.data['new_admin_id'])
         group[0].save()
         serializer = self.get_serializer(Group.objects.get(pk=request.data['group_id']))
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['get'])
+    def leaderboard(self, request, pk=None):
+        group = self.get_object()
+        profiles = Profile.objects.annotate(total_messages=Count('profile_from',filter=Q(profile_from__group_from=group))).order_by('-total_messages')
+        serializer = ProfileSerializerTotalMessages(profiles, many=True)
         return Response(serializer.data)
 
 class MessageViewSet(viewsets.ViewSet):

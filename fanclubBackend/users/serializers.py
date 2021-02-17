@@ -10,6 +10,13 @@ class Hobbyserializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     hobbies = Hobbyserializer(many=True, read_only=True)
+    
     class Meta:
         model = Profile
         exclude = ('password', 'is_superuser', 'is_staff', 'is_active', 'user_permissions', 'groups')
+
+class ProfileSerializerTotalMessages(serializers.ModelSerializer):
+    total_messages = serializers.IntegerField()
+    class Meta:
+        model = Profile
+        exclude = ('password', 'is_superuser', 'is_staff', 'is_active', 'user_permissions', 'groups','hobbies')

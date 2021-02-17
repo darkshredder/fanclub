@@ -27,6 +27,7 @@ export default class index extends Component {
     client: null,
     new_recieved_messages: [],
     groupInfo: null,
+    leaderboard: [],
   };
 
   scrollToBottom = () => {
@@ -37,6 +38,21 @@ export default class index extends Component {
   };
 
   componentDidMount = () => {
+    FetchApi(
+      "get",
+      `/chat/groups/${this.props.match.params.groupId}/leaderboard/`,
+      null,
+      localStorage.getItem("user_token")
+    )
+      .then((res) => {
+        console.log(res.data);
+        this.setState({ leaderboard: res.data });
+      })
+      .catch((error) => {
+        console.log(error.response);
+        toast.error(error.response.data);
+      });
+
     FetchApi(
       "get",
       `/chat/groups/${this.props.match.params.groupId}/`,
@@ -126,6 +142,7 @@ export default class index extends Component {
       new_message,
       new_recieved_messages,
       groupInfo,
+      leaderboard,
     } = this.state;
     return (
       <Container>
@@ -140,13 +157,12 @@ export default class index extends Component {
               style={{ cursor: "pointer" }}
               avatar
             />
-
             <span style={{ fontSize: 20, marginLeft: 5 }}>
               {groupInfo?.title}
             </span>
-
             <GroupMembers groupInfo={groupInfo} />
             <GroupDetails groupInfo={groupInfo} />
+            <GroupLeaderboard groupInfo={groupInfo} leaderboard={leaderboard} />
           </Segment>
           <Segment style={{ overflow: "auto", height: "50vh" }}>
             {groupData?.read_messages?.map((message, i) => {
@@ -533,6 +549,67 @@ const GroupDetails = (props) => {
               ) : null}
             </Form>
           </Segment>
+        </Modal.Description>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button onClick={() => setOpen(false)} positive>
+          Done
+        </Button>
+      </Modal.Actions>
+    </Modal>
+  );
+};
+
+const GroupLeaderboard = (props) => {
+  const [open, setOpen] = React.useState(false);
+
+  console.log(props.groupInfo);
+
+  return (
+    <Modal
+      open={open}
+      onClose={() => setOpen(false)}
+      onOpen={() => setOpen(true)}
+      trigger={<Button style={{ float: "right" }}>Leaderboard</Button>}
+    >
+      <Modal.Header>Leaderboard</Modal.Header>
+      <Modal.Content scrolling>
+        <Modal.Description>
+          <Table padded color="black">
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Rank</Table.HeaderCell>
+                <Table.HeaderCell>Profile</Table.HeaderCell>
+                <Table.HeaderCell>Message Count</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              {props?.leaderboard?.map((member, index) => {
+                return (
+                  <Table.Row key={index}>
+                    <Table.Cell>{index + 1}</Table.Cell>
+                    <Table.Cell>
+                      <Image
+                        src={
+                          member?.profile_img
+                            ? `http://localhost:8000${member?.profile_img}`
+                            : `https://react.semantic-ui.com/images/wireframe/square-image.png`
+                        }
+                        style={{ cursor: "pointer" }}
+                        avatar
+                        onClick={() => {
+                          history.push(`/profile/${member?.id}`);
+                        }}
+                      />
+                      {member?.full_name}
+                    </Table.Cell>
+                    <Table.Cell>{member?.total_messages}</Table.Cell>
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
+          </Table>
         </Modal.Description>
       </Modal.Content>
       <Modal.Actions>
