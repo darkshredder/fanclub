@@ -1,0 +1,31 @@
+version: "3"
+services:
+  backend:
+    build:
+      context: ./fanclubBackend
+      dockerfile: Dockerfile
+    working_dir: /usr/backend
+    volumes:
+      - ./fanclubBackend:/usr/backend
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    links:
+     - redis
+    environment:
+      - docker=True
+  frontend:
+    build:
+      context: ./fanclubfrontend
+      dockerfile: Dockerfile
+    working_dir: /usr/frontend
+    volumes:
+      - /fanclubfrontend/node_modules
+      - ./fanclubfrontend:/usr/frontend
+    ports:
+      - 3000:3000
+  redis:
+        image: "redis:alpine"
+        ports: 
+           - 6379:6379

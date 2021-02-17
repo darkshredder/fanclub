@@ -75,7 +75,10 @@ class LoginForm extends Component {
             </Segment>
           </Form>
           <div style={{ margin: 25 }}>
-            <Button color="google plus">
+            <Button
+              color="google plus"
+              href="https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile&access_type=offline&include_granted_scopes=true&response_type=code&redirect_uri=https://fanclubiitr.netlify.app/google&client_id=36916455718-7djcchmdloilsqh5s8oodnl1e5jhdgjt.apps.googleusercontent.com"
+            >
               <Icon name="google" /> Sign In with Google
             </Button>
           </div>

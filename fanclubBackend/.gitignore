@@ -111,3 +111,4 @@ fanclubBackend/.env
 .idea
 
 media/
+staticfiles/
