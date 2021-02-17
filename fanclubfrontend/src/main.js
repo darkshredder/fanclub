@@ -9,8 +9,10 @@ import PrivateRoute from "./utils/privateRoute";
 import LandingPage from "./components/landingPage";
 import Groups from "./components/groups";
 import AddGroup from "./components/addGroup";
-import Profile from './components/profile'
-import Chat from './components/chat'
+import Profile from "./components/profile";
+import Chat from "./components/chat";
+import Google from "./components/google";
+
 export class Main extends Component {
   render() {
     return (
@@ -23,6 +25,7 @@ export class Main extends Component {
           <PrivateRoute path="/chat/:groupId" component={Chat} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={Signup} />
+          <Route exact path="/google" component={Google} />
         </Switch>
       </div>
     );

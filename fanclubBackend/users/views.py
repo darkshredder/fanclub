@@ -41,6 +41,7 @@ class UserViewSet(viewsets.ViewSet):
                 email=request.data['email'],
                 full_name=request.data['full_name'],
                 password=request.data['password'],
+                phone_number=request.data.get("phone_number", None)
             )
         profile.set_password(request.data['password'])
         request.data._mutable = True
@@ -88,12 +89,12 @@ class UserViewSet(viewsets.ViewSet):
         return Response("Passwords does not match", status=status.HTTP_403_FORBIDDEN)
     
     @action(detail=False, methods=['post'])
-    def googleLoginSignup(self, request):
+    def google_login_signup(self, request):
         data = request.data
         auth_code = data.get("authcode", None)
         client_id = "36916455718-7djcchmdloilsqh5s8oodnl1e5jhdgjt.apps.googleusercontent.com"
         client_secret = "xUOv9B0Se7RNf3njgagNL0nx"
-        redirect_uri = "https://www.example.com/google"
+        redirect_uri = "https://fanclubiitr.netlify.app/google"
         url = "https://oauth2.googleapis.com/token"
         if not auth_code:
             return Response("Authorization code should be provided ! ", status=status.HTTP_400_BAD_REQUEST)
@@ -107,7 +108,7 @@ class UserViewSet(viewsets.ViewSet):
             profile = Profile.objects.get(email=res['email'])
             token, created = Token.objects.get_or_create(user=profile)
             update_last_login(None, profile)
-            return Response({"token": token.key}, status=status.HTTP_200_OK)
+            return Response({"token": token.key, "profile_id":profile.id}, status=status.HTTP_200_OK)
 
         except ObjectDoesNotExist:
             profile = Profile.objects._create_user(
@@ -118,7 +119,7 @@ class UserViewSet(viewsets.ViewSet):
             profile.save()
             token, created = Token.objects.get_or_create(user=profile)
             update_last_login(None, profile)
-            return Response({"token": token.key}, status=status.HTTP_200_OK)
+            return Response({"token": token.key, "profile_id":profile.id}, status=status.HTTP_200_OK)
     
 
 
