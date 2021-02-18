@@ -21,7 +21,6 @@ services:
       dockerfile: Dockerfile
     working_dir: /usr/frontend
     volumes:
-      - /usr/frontend/node_modules
       - ./fanclubfrontend:/usr/frontend
     ports:
       - 3000:3000
