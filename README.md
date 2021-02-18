@@ -1,6 +1,6 @@
 # Fan​ Clubs ​Portal (Mission on Tatooine)
 
-<!-- As we all know that there are many people who help building open source projects without any incentive. Maybe Its the reason that it's not much popular in India to help them. So to tackle this issue We have built a Blockchain based solution where you can Login using Github and thus earn Ethereum tokens or Crypto money. We just need to click on Collect and it will be directly transfered to our Wallet.To make this app more Enjoyable we have also added Playing Zone where you give a Travia Quiz and earn Crypto Money Aswell -->
+Fan Club Portal for every loyal fan out there. Here, Users can create achat room for any movie/series they like which can be followed by other fans logged into the portal.
 
 ## Tech Stack
 

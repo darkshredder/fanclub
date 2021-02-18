@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from utilities.base64conv import decode_base64_file
 import base64
 from django.core.files.base import ContentFile
+from django.conf import settings
 class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet for Register or Login, Hobby Add,Delete and Fetch Profile users.
@@ -92,9 +93,9 @@ class UserViewSet(viewsets.ViewSet):
     def google_login_signup(self, request):
         data = request.data
         auth_code = data.get("authcode", None)
-        client_id = "36916455718-7djcchmdloilsqh5s8oodnl1e5jhdgjt.apps.googleusercontent.com"
-        client_secret = "xUOv9B0Se7RNf3njgagNL0nx"
-        redirect_uri = "https://fanclubiitr.netlify.app/google"
+        client_id = settings.GOOGLE_OAUTH2_CLIENT_ID
+        client_secret = settings.GOOGLE_OAUTH2_CLIENT_SECRET
+        redirect_uri = settings.GOOGLE_OAUTH2_REDIRECT_URI
         url = "https://oauth2.googleapis.com/token"
         if not auth_code:
             return Response("Authorization code should be provided ! ", status=status.HTTP_400_BAD_REQUEST)

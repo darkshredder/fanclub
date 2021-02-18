@@ -167,3 +167,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+GOOGLE_OAUTH2_CLIENT_ID = '36916455718-7djcchmdloilsqh5s8oodnl1e5jhdgjt.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'xUOv9B0Se7RNf3njgagNL0nx'
+GOOGLE_OAUTH2_REDIRECT_URI = 'https://fanclubiitr.netlify.app/google'
