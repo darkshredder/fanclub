@@ -12,12 +12,14 @@ import AddGroup from "./components/addGroup";
 import Profile from "./components/profile";
 import Chat from "./components/chat";
 import Google from "./components/google";
+import Leaderboard from './components/leaderboard'
 
 export class Main extends Component {
   render() {
     return (
       <div>
         <Switch>
+          <PrivateRoute exact path="/leaderboard" component={Leaderboard} />
           <PrivateRoute exact path="/create_group" component={AddGroup} />
           <PrivateRoute exact path="/groups" component={Groups} />
           <PrivateRoute exact path="/" component={LandingPage} />

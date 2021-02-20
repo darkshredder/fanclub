@@ -24,6 +24,9 @@ export default class Navbar extends Component {
     if (history.location.pathname === "/create_group") {
       this.setState({ activeItem: "Create New Chat Room" });
     }
+    if (history.location.pathname === "/leaderboard") {
+      this.setState({ activeItem: "Leaderboard" });
+    }
     FetchApi(
       "get",
       "/auth/users/profile/",
@@ -51,6 +54,9 @@ export default class Navbar extends Component {
     }
     if (name === "Create New Chat Room") {
       history.push("/create_group");
+    }
+    if (name === "Leaderboard") {
+      history.push("/leaderboard");
     }
   };
 
@@ -107,14 +113,19 @@ export default class Navbar extends Component {
             active={activeItem === "Create New Chat Room"}
             onClick={this.handleItemClick}
           />
+          <Menu.Item
+            name="Leaderboard"
+            active={activeItem === "Leaderboard"}
+            onClick={this.handleItemClick}
+          />
           <Menu.Menu position="right">
             <Header as="h4">
               <Image
                 src={
-                    profile?.profile_img
-                      ? `http://localhost:8000${profile?.profile_img}`
-                      : `https://react.semantic-ui.com/images/wireframe/square-image.png`
-                  }
+                  profile?.profile_img
+                    ? `http://localhost:8000${profile?.profile_img}`
+                    : `https://react.semantic-ui.com/images/wireframe/square-image.png`
+                }
                 circular
               />
               <Header.Content>
