@@ -106,7 +106,9 @@ export default class index extends Component {
         client.onopen = () => {
           console.log("WebSocket Client Connected");
         };
-        this.scrollToUnread();
+        setInterval(() => {
+          this.scrollToUnread();
+        }, 0);
 
         client.onmessage = (message) => {
           let textMessage = JSON.parse(message.data);
