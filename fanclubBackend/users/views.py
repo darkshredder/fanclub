@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404
-from users.serializers import ProfileSerializer
+from users.serializers import ProfileSerializer, ProfileSerializerTotalMessages
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -17,6 +17,8 @@ from utilities.base64conv import decode_base64_file
 import base64
 from django.core.files.base import ContentFile
 from django.conf import settings
+from django.db.models import Q, Count
+
 class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet for Register or Login, Hobby Add,Delete and Fetch Profile users.
@@ -159,5 +161,10 @@ class UserViewSet(viewsets.ViewSet):
 
         except ObjectDoesNotExist:
             return Response("Wrong Hobby provided!!! ", status=status.HTTP_400_BAD_REQUEST)
-
+    
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def leaderboard(self, request):
+        profiles = Profile.objects.annotate(total_messages=Count('profile_from')).order_by('-total_messages', '-last_login')
+        serializer = ProfileSerializerTotalMessages(profiles, many=True)
+        return Response(serializer.data)
 

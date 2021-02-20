@@ -81,7 +81,7 @@ class GroupViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'])
     def leaderboard(self, request, pk=None):
         group = self.get_object()
-        profiles = Profile.objects.annotate(total_messages=Count('profile_from',filter=Q(profile_from__group_from=group))).order_by('-total_messages')
+        profiles = Profile.objects.annotate(total_messages=Count('profile_from',filter=Q(profile_from__group_from=group))).order_by('-total_messages', '-last_login')
         serializer = ProfileSerializerTotalMessages(profiles, many=True)
         return Response(serializer.data)
 
