@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Image } from "semantic-ui-react";
 import FetchApi from "../../utils/fetchAPI";
 import { toast } from "react-toastify";
 import history from "../../history";
@@ -38,13 +38,24 @@ export default class landingPage extends Component {
           {followedGroups?.map((g, index) => {
             return (
               <Table.Row key={index}>
-                <Table.Cell>{g.title}</Table.Cell>
+                <Table.Cell>
+                  <Image
+                    src={
+                      g?.group_img
+                        ? `${g?.group_img}`
+                        : `https://react.semantic-ui.com/images/wireframe/square-image.png`
+                    }
+                    style={{ cursor: "pointer" }}
+                    avatar
+                  />{" "}
+                  {g.title}
+                </Table.Cell>
                 <Table.Cell>{g.description}</Table.Cell>
                 <Table.Cell>
                   <Button
                     positive
                     onClick={() => {
-                      history.push(`/chat/${g.id}`)
+                      history.push(`/chat/${g.id}`);
                     }}
                   >
                     View

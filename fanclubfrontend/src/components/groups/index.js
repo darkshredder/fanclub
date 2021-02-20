@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, Button } from "semantic-ui-react";
+import { Table, Button, Image } from "semantic-ui-react";
 import FetchApi from "../../utils/fetchAPI";
 import { toast } from "react-toastify";
 
@@ -60,7 +60,7 @@ export default class groups extends Component {
   render() {
     const { allGroups, user_id } = this.state;
     return (
-      <Table padded color="black" >
+      <Table padded color="black">
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
@@ -74,7 +74,18 @@ export default class groups extends Component {
           {allGroups?.map((g, index) => {
             return (
               <Table.Row key={index}>
-                <Table.Cell>{g.title}</Table.Cell>
+                <Table.Cell>
+                  <Image
+                    src={
+                      g?.group_img
+                        ? `${g?.group_img}`
+                        : `https://react.semantic-ui.com/images/wireframe/square-image.png`
+                    }
+                    style={{ cursor: "pointer" }}
+                    avatar
+                  />{" "}
+                  {g.title}
+                </Table.Cell>
                 <Table.Cell>{g.description}</Table.Cell>
                 <Table.Cell>
                   {g.members.includes(Number(user_id))
