@@ -184,22 +184,29 @@ export default class index extends Component {
     return (
       <Container>
         <Segment>
-          <Segment>
-            <Image
-              src={
-                groupInfo?.group_img
-                  ? `${groupInfo?.group_img}`
-                  : `https://react.semantic-ui.com/images/wireframe/square-image.png`
-              }
-              style={{ cursor: "pointer" }}
-              avatar
-            />
-            <span style={{ fontSize: 20, marginLeft: 5 }}>
-              {groupInfo?.title}
-            </span>
-            <GroupMembers groupInfo={groupInfo} />
-            <GroupDetails groupInfo={groupInfo} />
-            <GroupLeaderboard groupInfo={groupInfo} leaderboard={leaderboard} />
+          <Segment style={{display:"flex", justifyContent:"space-between"}}>
+            <div>
+              <Image
+                src={
+                  groupInfo?.group_img
+                    ? `${groupInfo?.group_img}`
+                    : `https://react.semantic-ui.com/images/wireframe/square-image.png`
+                }
+                style={{ cursor: "pointer" }}
+                avatar
+              />
+              <span style={{ fontSize: 20, marginLeft: 5 }}>
+                {groupInfo?.title}
+              </span>
+            </div>
+            <div>
+              <GroupMembers groupInfo={groupInfo} />
+              <GroupDetails groupInfo={groupInfo} />
+              <GroupLeaderboard
+                groupInfo={groupInfo}
+                leaderboard={leaderboard}
+              />
+            </div>
           </Segment>
           <Segment style={{ overflow: "auto", height: "50vh" }}>
             {groupData?.read_messages?.map((message, i) => {

@@ -97,7 +97,7 @@ export default class Navbar extends Component {
     ];
     return (
       <Segment>
-        <Menu pointing secondary>
+        <Menu pointing secondary stackable>
           <Menu.Item
             name="Following Chat Rooms"
             active={activeItem === "Following Chat Rooms"}
