@@ -102,7 +102,7 @@ class MessageViewSet(viewsets.ViewSet):
         group_id = request.data['group_id']
         group_messages_all = Message.objects.filter(group_from=group_id)
         group_messages_read = Message.objects.filter(group_from=group_id, read_by=request.user.id)
-        group_messages_unread = group_messages_all.difference(group_messages_read)
+        group_messages_unread = group_messages_all.difference(group_messages_read).order_by('id')
         serializer_read = MessageSerializer(group_messages_read, many=True)
         serializer_unread = MessageSerializer(group_messages_unread, many=True)
         return Response({"read_messages":serializer_read.data,"unread_messages":serializer_unread.data})
