@@ -1,11 +1,11 @@
 FROM node:alpine
 
 
-RUN mkdir /usr/backend
-WORKDIR /usr/backend
+RUN mkdir /usr/frontend
+WORKDIR /usr/frontend
 
 COPY ./package.json ./
 
-RUN npm install
+RUN yarn
 
-CMD ["npm","run","start"]
+CMD ["yarn", "start"]
